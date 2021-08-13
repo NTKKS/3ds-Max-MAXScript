@@ -1,0 +1,50 @@
+try (closeRolloutFloater RolloutFloaterTemplate) catch()
+
+rollout RolloutTemplate "NTKKS tools"
+(
+		button Btn01 "pivot min-Z"
+		
+		on Btn01 pressed do
+		(
+			$.pivot = [$.center.x,$.center.y,$.min.z]
+		)
+		
+		button Btn02 "zero pos"
+		
+		on Btn02 pressed do
+		(
+			$.position = [0,0,0]
+		)
+		
+		button Btn03 "basic color"
+		
+		on Btn03 pressed do
+		(
+			$.wirecolor = color 0 0 0
+			$.material = meditMaterials[1]
+		)
+		
+		button Btn04 "lock camera"
+		
+		on Btn04 pressed do
+		(
+			setTransformLockFlags $ #all
+		)
+		
+		button Btn05 "pivot center"
+		
+		on Btn05 pressed do
+		(
+			$.pivot = [$.center.x,$.center.y,$.center.z]
+		)
+		
+		button Btn06 "dragNdropRef"
+		
+		on Btn06 pressed do
+		(
+			fileIn @"C:\Users\Honza - Personal Rig\Documents\scripts;ui;etc\dragNDropReferences11.ms"
+		)
+)
+
+RolloutFloaterTemplate = newrolloutFloater "Basic_Tools" 150 200
+addrollout RolloutTemplate RolloutFloaterTemplate
