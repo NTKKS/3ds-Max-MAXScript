@@ -1,14 +1,62 @@
-try (closeRolloutFloater RolloutFloaterTemplate) catch()
+macroScript NTKKS_tools
+category:"DragAndDrop"
+category: "MyTools"  
+buttonText: "NTKKS tools"
 
-rollout RolloutTemplate "NTKKS tools"
+------------------------------------------------------------------------------------------------------------------------------
+-- NTKKS tools v1.1 - 13/09/2022
+-- Dev by Jan Janás 
+-- updates: min-Z pivot for each object
+------------------------------------------------------------------------------------------------------------------------------
+
 (
-		button Btn01 "pivot min-Z"
-		
-		on Btn01 pressed do
+	try (closeRolloutFloater ntkksTools) catch () --closes rolloutFloater if it is opened
+
+	--default floater setup
+	top = 2010		--horizontal rolloutFloater position
+	left = 485		--vertical rolloutFloater position
+
+	rollout toolsRollout "NTKKS tools"
+	(
+		button pivotBtn "pivot" across:2
+		on pivotBtn pressed do
 		(
-			$.pivot = [$.center.x,$.center.y,$.min.z]
-		)
+			rollout pivotRollout "Pivot actions"
+			(
+				button minzBtn "pivot min-Z"
+				on minzBtn pressed do
+				(	if $ == selection then
+					(
+					for i = 1 to $.count do $[i].pivot = [$[i].center.x,$[i].center.y,$[i].min.z]
+					)
+					if $ == undefined then ()
+					if $ != selection and $ != undefined then
+					(
+					$.pivot = [$.center.x,$.center.y,$.min.z]	
+					)
+				DestroyDialog pivotRollout
+				)
+				
+				button centerBtn "pivot center"
 		
+				on centerBtn pressed do
+				(
+					$.pivot = [$.center.x,$.center.y,$.center.z]
+					DestroyDialog pivotRollout
+				)
+				
+				button Btn07 "pivot [0,0,0]"
+				
+				on Btn07 pressed do
+				(
+					$.pivot = [0,0,0]
+					DestroyDialog pivotRollout
+				)
+				
+			)
+			createDialog pivotRollout
+		)
+			
 		button Btn02 "zero pos"
 		
 		on Btn02 pressed do
@@ -24,27 +72,37 @@ rollout RolloutTemplate "NTKKS tools"
 			$.material = meditMaterials[1]
 		)
 		
-		button Btn04 "lock camera"
+		button Btn04 "lock $ " across:2
 		
 		on Btn04 pressed do
 		(
-			setTransformLockFlags $ #all
+			setTransformLockFlags selection #all
 		)
 		
-		button Btn05 "pivot center"
+		button Btn05 "unlock $ "
 		
 		on Btn05 pressed do
 		(
-			$.pivot = [$.center.x,$.center.y,$.center.z]
+			setTransformLockFlags selection #none
 		)
 		
-		button Btn06 "dragNdropRef"
+		button Btn09 "turnToDummy" tooltip:"sets Renderable = false and displayAsBox = true"
 		
-		on Btn06 pressed do
+		on Btn09 pressed do
 		(
-			fileIn @"C:\Users\Honza - Personal Rig\Documents\scripts;ui;etc\dragNDropReferences11.ms"
+			$.renderable = false
+			$.boxMode = true
 		)
-)
+		
+		button Btn08 "CollapseDedStruct"
+		
+		on Btn08 pressed do
+		(
+			polyop.collapseDeadStructs $
+		)
+		
+	)
 
-RolloutFloaterTemplate = newrolloutFloater "Basic_Tools" 150 200
-addrollout RolloutTemplate RolloutFloaterTemplate
+	ntkksTools = newRolloutFloater "" 150 130 top left
+	addrollout toolsRollout ntkksTools
+)
